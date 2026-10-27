@@ -109,9 +109,13 @@ link_cli() {
     case ":$PATH:" in
         *":$BIN_DIR:"*) ;;
         *)
+            case "${SHELL:-}" in
+                */bash) PROFILE="~/.bash_profile" ;;
+                *) PROFILE="~/.zprofile" ;;
+            esac
             say ""
-            say "$BIN_DIR isn't on your PATH yet. To run tamebar from a terminal, add it:"
-            say "  echo 'export PATH=\"$BIN_DIR:\$PATH\"' >> ~/.zprofile && . ~/.zprofile"
+            say "$BIN_DIR isn't on your PATH yet. To run tamebar from a terminal, add it and open a new window:"
+            say "  echo 'export PATH=\"$BIN_DIR:\$PATH\"' >> $PROFILE"
             ;;
     esac
 }
