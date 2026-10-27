@@ -1,0 +1,19 @@
+install.sh
+  s_8157103bb20410::t_9a310e8b12722c 112-115,117-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ba493c5c3e28c2edf5963a821e169a1c6a62b519",
+  "prompts": {},
+  "sessions": {
+    "s_8157103bb20410": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "68d95048-110d-4f77-b001-a47785f192af",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Paul FOURNET <paul.pfournet@gmail.com>"
+    }
+  }
+}
