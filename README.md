@@ -35,8 +35,8 @@ the Releases page yourself):
 - run `xattr -dr com.apple.quarantine ~/Applications/Tamebar.app` (or `/Applications/Tamebar.app` for
   Homebrew), then open it again.
 
-Tamebar then asks for the permissions it uses (Accessibility, and Calendar, if you let it quiet agents before meetings
-). They stay granted across updates.
+Tamebar then asks for the permissions it uses: Accessibility, and Calendar if you let it quiet agents before
+meetings. They stay granted across updates.
 
 ## Update
 
