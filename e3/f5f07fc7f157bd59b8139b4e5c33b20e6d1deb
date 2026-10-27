@@ -1,0 +1,19 @@
+README.md
+  s_8157103bb20410::t_7586e8b442ee45 38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e3f5f07fc7f157bd59b8139b4e5c33b20e6d1deb",
+  "prompts": {},
+  "sessions": {
+    "s_8157103bb20410": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "68d95048-110d-4f77-b001-a47785f192af",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Paul FOURNET <paul.pfournet@gmail.com>"
+    }
+  }
+}
