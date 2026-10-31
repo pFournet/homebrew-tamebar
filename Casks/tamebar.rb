@@ -2,10 +2,10 @@ cask "tamebar" do
   version "0.1.0"
   sha256 "18d3b1f95e01bd5a5470b2113d279fe2d04bd105d48fcd42496158ffb328b80c"
 
-  url "https://github.com/pFournet/homebrew-tamebar/releases/download/v#{version}/Tamebar-#{version}.dmg"
+  url "https://github.com/pFournet/tamebar/releases/download/v#{version}/Tamebar-#{version}.dmg"
   name "Tamebar"
   desc "Menu bar monitor that keeps AI coding agents from overwhelming the computer"
-  homepage "https://github.com/pFournet/homebrew-tamebar"
+  homepage "https://github.com/pFournet/tamebar"
 
   livecheck do
     url :url

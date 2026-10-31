@@ -1,10 +1,13 @@
 #!/bin/sh
-# Installs or updates Tamebar from the latest release of github.com/pFournet/homebrew-tamebar.
+# Installs or updates Tamebar from the latest release of github.com/pFournet/tamebar.
 #
-#   curl -fsSL https://raw.githubusercontent.com/pFournet/homebrew-tamebar/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/pFournet/tamebar/main/install.sh | sh
 #
-# It copies Tamebar.app into ~/Applications, links ~/.local/bin/tamebar to the app's command line, and
-# opens the app. It never uses sudo and never touches /Applications. Run it again to update.
+# It downloads the release's Tamebar-<version>.dmg, checks it against its published .sha256, copies
+# Tamebar.app into ~/Applications, links ~/.local/bin/tamebar to the app's command line, and opens the
+# app. Then it asks once, y/N, whether to add the start hook (tamebar hooks install) to Claude Code and
+# Codex; without a terminal to ask in, the answer is No. It never uses sudo and never touches
+# /Applications. Run it again to update.
 #
 # Settings, all optional:
 #   TAMEBAR_VERSION=0.1.0   install that release instead of the latest
@@ -12,9 +15,10 @@
 #   TAMEBAR_BIN_DIR=<dir>   put the tamebar link there instead of ~/.local/bin
 #   TAMEBAR_NO_OPEN=1       don't open the app at the end
 #   TAMEBAR_FORCE=1         reinstall even when that version is already installed
+#   TAMEBAR_HOOKS=yes|no    answer the start hook question without asking
 set -eu
 
-REPO="${TAMEBAR_REPO:-pFournet/homebrew-tamebar}"
+REPO="${TAMEBAR_REPO:-pFournet/tamebar}"
 APP_DIR="${TAMEBAR_APP_DIR:-$HOME/Applications}"
 BIN_DIR="${TAMEBAR_BIN_DIR:-$HOME/.local/bin}"
 WANTED="${TAMEBAR_VERSION:-}"
@@ -60,7 +64,7 @@ curl -fsSL -H "Accept: application/vnd.github+json" -o "$WORK/release.json" "$AP
 TAG="$(json_value "$WORK/release.json" tag_name)" || die "the release has no tag."
 VERSION="${TAG#v}"
 ASSET_COUNT="$(json_value "$WORK/release.json" assets)" || die "the release lists no files."
-DMG_NAME=""
+DMG_NAME="Tamebar-$VERSION.dmg"
 DMG_URL=""
 SUM_URL=""
 i=0
@@ -68,22 +72,12 @@ while [ "$i" -lt "$ASSET_COUNT" ]; do
     NAME="$(json_value "$WORK/release.json" "assets.$i.name")"
     URL="$(json_value "$WORK/release.json" "assets.$i.browser_download_url")"
     case "$NAME" in
-        *.dmg)
-            [ -z "$DMG_NAME" ] || die "release $TAG has more than one DMG."
-            DMG_NAME="$NAME"
-            DMG_URL="$URL"
-            ;;
+        "$DMG_NAME") DMG_URL="$URL" ;;
+        "$DMG_NAME.sha256") SUM_URL="$URL" ;;
     esac
     i=$((i + 1))
 done
-[ -n "$DMG_NAME" ] || die "release $TAG has no DMG."
-i=0
-while [ "$i" -lt "$ASSET_COUNT" ]; do
-    if [ "$(json_value "$WORK/release.json" "assets.$i.name")" = "$DMG_NAME.sha256" ]; then
-        SUM_URL="$(json_value "$WORK/release.json" "assets.$i.browser_download_url")"
-    fi
-    i=$((i + 1))
-done
+[ -n "$DMG_URL" ] || die "release $TAG has no $DMG_NAME."
 [ -n "$SUM_URL" ] || die "release $TAG has no $DMG_NAME.sha256, so the download can't be checked."
 
 installed_version() {
@@ -138,6 +132,28 @@ wait_for_exit() {
     [ -z "$(running_pids)" ]
 }
 
+# Asks once whether to add the start hook (a new Claude Code or Codex session waits while the Mac
+# is struggling). The question is read from the terminal, since stdin is the script itself under
+# curl | sh; with no terminal, the answer is No. TAMEBAR_HOOKS=yes or no answers it beforehand.
+offer_hooks() {
+    ANSWER="${TAMEBAR_HOOKS:-}"
+    if [ -z "$ANSWER" ]; then
+        # In a subshell: a failed redirection on `:` would end the script itself.
+        if ! (: </dev/tty) 2>/dev/null; then
+            say "No terminal to ask in: the start hook wasn't added. Add it any time with: tamebar hooks install"
+            return 0
+        fi
+        printf '\nAdd the start hook to Claude Code and Codex, so a new session waits while the Mac is\nstruggling? It edits ~/.claude/settings.json and ~/.codex/hooks.json, with a backup. [y/N] ' >/dev/tty
+        read -r ANSWER </dev/tty || ANSWER=""
+    fi
+    case "$ANSWER" in
+        [yY] | [yY][eE][sS])
+            "$EXE" hooks install || say "Note: the start hook couldn't be added everywhere; see above."
+            ;;
+        *) say "Start hook not added. Add it any time with: tamebar hooks install" ;;
+    esac
+}
+
 finish() {
     link_cli
     if [ "${TAMEBAR_NO_OPEN:-0}" != "1" ]; then
@@ -146,6 +162,7 @@ finish() {
     if [ -d /Applications/Tamebar.app ] && [ "$APP_DIR" != "/Applications" ]; then
         say "Note: another copy is in /Applications (Homebrew?). Keep one: brew uninstall --cask tamebar, or delete it."
     fi
+    offer_hooks
 }
 
 if [ "$(installed_version)" = "$VERSION" ] && [ "${TAMEBAR_FORCE:-0}" != "1" ]; then
