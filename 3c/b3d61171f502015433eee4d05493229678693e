@@ -1,0 +1,19 @@
+Casks/tamebar.rb
+  s_7cdfd02ae150d2::t_985ddb8cf7dc25 2-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3cb3d61171f502015433eee4d05493229678693e",
+  "prompts": {},
+  "sessions": {
+    "s_7cdfd02ae150d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "s_7cdfd02ae150d2",
+        "model": "unknown"
+      },
+      "human_author": "Paul FOURNET <paul.pfournet@gmail.com>"
+    }
+  }
+}
