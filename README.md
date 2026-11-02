@@ -5,7 +5,7 @@ repository holds only its Homebrew cask; the source, the releases and the instal
 [pFournet/tamebar](https://github.com/pFournet/tamebar).
 
 ```sh
-brew install --cask pfournet/tamebar/tamebar
+brew trust pfournet/tamebar && brew install --cask pfournet/tamebar/tamebar
 ```
 
 Or without Homebrew:
