@@ -1,6 +1,6 @@
 cask "tamebar" do
-  version "0.1.0"
-  sha256 "18d3b1f95e01bd5a5470b2113d279fe2d04bd105d48fcd42496158ffb328b80c"
+  version "0.2.0"
+  sha256 "e0d7cb21384ebf7eb03f616fb8b6020b560521b81a4f7e5ad806e8ed17db1f36"
 
   url "https://github.com/pFournet/tamebar/releases/download/v#{version}/Tamebar-#{version}.dmg"
   name "Tamebar"
